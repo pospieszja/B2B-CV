@@ -1,0 +1,108 @@
+﻿@page
+
+@using HortimexB2B.Infrastructure.Identity;
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@model HortimexB2B.Web.Pages.User.IndexModel
+@{
+    ViewData["Title"] = "Profil";
+}
+
+
+<h2>Profil użytkownika</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Dane użytkownika</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="form-group col-md-4 col-xs-12">
+                <label class="control-label">Adres e-mail</label>
+                <p class="form-control-static">@Model.UserInfoViewModel.Email</p>
+            </div>
+        </div>
+        <div class="row btn-toolbar">
+            <div class="form-group col-md12 col-xs12">
+                <a class="btn btn-warning" asp-page="./Manage/ChangePassword">Zmiana hasła</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!User.IsInRole("Administrator"))
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">Dane firmy</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">Nazwa firmy</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.CompanyName</p>
+                </div>
+
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">NIP</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.NIP</p>
+                </div>
+
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">Kod kontrahenta</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.GraffitiID</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">Adres</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.Address.Street</p>
+                </div>
+
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">Miasto</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.Address.City</p>
+                </div>
+
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">Kod pocztowy</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.Address.PostalCode</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Opiekun handlowy</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">Opiekun</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.SalesManager.Name</p>
+                </div>
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">Telefon</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.SalesManager.Phone</p>
+                </div>
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">E-mail</label>
+                    <p class="form-control-static"><a href="mailto:@Model.UserInfoViewModel.SalesManager.Email">@Model.UserInfoViewModel.SalesManager.Email</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Informacje finansowe</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">Kwota limitu kupieckiego</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.CreditLimit</p>
+                </div>
+                <div class="form-group col-md-4 col-xs-12">
+                    <label class="control-label">Ilość dni płatności przelewem</label>
+                    <p class="form-control-static">@Model.UserInfoViewModel.PaymentTerms</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

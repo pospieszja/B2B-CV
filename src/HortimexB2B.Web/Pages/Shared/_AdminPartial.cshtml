@@ -1,0 +1,15 @@
+﻿@using HortimexB2B.Infrastructure.Identity;
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (User.IsInRole("Administrator"))
+{
+    <li><a asp-page="/Admin/Index">Admin</a></li>
+}
+@if (SignInManager.IsSignedIn(User))
+{
+    <li><a asp-page="/Catalog/Index">Katalog</a></li>
+    <li><a asp-page="/Orders/Index">Zamówienia</a></li>
+    <li><a asp-page="/Basket/Index"><i class="fa fa-shopping-cart"></i> Koszyk</a></li>
+}

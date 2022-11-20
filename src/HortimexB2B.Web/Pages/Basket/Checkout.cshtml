@@ -1,0 +1,49 @@
+﻿@page
+@model HortimexB2B.Web.Pages.Basket.CheckoutModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h2>Zakup</h2>
+
+<form class="form-horizontal" method="post" asp-page-handler="buy">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Model.SelectedAddress" class="col-sm-2 control-label"></label>
+
+        <div class="col-sm-10">
+            <select asp-for="Model.SelectedAddress" asp-items="@Model.Model.AddressSelectList"></select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Model.ReferenceNumber" class="col-sm-2 control-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="Model.ReferenceNumber" maxlength="100" class="form-control" placeholder="Tu możesz wprowadzić Twój numer zamówienia">
+            <span asp-validation-for="Model.ReferenceNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Model.Comments" class="col-sm-2 control-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="Model.Comments" maxlength="80" class="form-control">
+            <span asp-validation-for="Model.Comments" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Model.DesiredDeliveryDate" class="col-sm-2 control-label"></label>
+        <div class="col-sm-10">
+            <input class="form-control" type="date" min="@Model.Model.MinDesiredDeliveryDate.ToString("yyyy-MM-dd")" asp-for="Model.DesiredDeliveryDate" value="@Model.Model.MinDesiredDeliveryDate.ToString("yyyy-MM-dd")">
+            <span asp-validation-for="Model.DesiredDeliveryDate" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <input type="submit" class="btn btn-primary" value="Kupuję" />
+        </div>
+    </div>
+</form>

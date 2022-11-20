@@ -1,0 +1,29 @@
+﻿@page
+@model HortimexB2B.Web.TermsModel
+@{
+    ViewData["Title"] = "Regulamin";
+}
+
+<h2>Regulamin</h2>
+Aby móc korzytać z serwisu musisz zaakpcetować poniższe warunki i regulaminy.
+
+<form method="post" class="form-horizontal center-block">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-check">
+        <input asp-for="PlatformTerms" class="form-check-input">
+        <label class="form-check-label"><a href="https://hortimex.pl/b2b/Regulamin_Platforma_dla_Odbiorców_V3.0.pdf" target="_blank">Regulamin Platformy dla Odbiorców</a></label>
+    </div>
+
+    <div class="form-check">
+        <input asp-for="SaleTerms" class="form-check-input">
+        <label class="form-check-label"><a href="https://hortimex.pl/b2b/Ogólne_Warunki_Sprzedaży.pdf" target="_blank">Ogólne warunki sprzedaży</a></label>
+    </div>
+
+    <div class="form-group text-center">
+        <div class="col-sm-offset-3 col-sm-6">
+            <input type="submit" class="btn btn-success" value="Wyrażam zgodę" />
+        </div>
+    </div>
+
+</form>

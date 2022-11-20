@@ -1,0 +1,156 @@
+﻿@page
+@model HortimexB2B.Web.Pages.Orders.IndexModel
+@{
+    ViewData["Title"] = "Historia zamówień";
+}
+
+<div class="container">
+    <h2>Historia zamówień</h2>
+    <div class="row">
+        <form>
+            <div class="form-group form-inline">
+                <label class="control-label col-md-4">Termin realizacji</label>
+                <div class="col-md-4">
+                    <input class="form-control" type="date" min="2019-01-01" asp-for="@Model.StartDate" value=@Model.StartDate.ToString("yyyy-MM-dd")>
+                    <input class="form-control" type="date" asp-for="@Model.EndDate" value=@Model.EndDate.ToString("yyyy-MM-dd")>
+                    <input type="hidden" name="handler" value="filter" />
+                </div>
+                <div class="col-md-4">
+                    <input type="submit" class="order__button order__button__purple" value="Filtruj" />
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    @if (Model.Model.Any())
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nr zamówienia</th>
+                    <th>Termin realizacji</th>
+                    <th>Wartość całkowita [netto]</th>
+                    <th>Nr zamówienia zewnętrzny</th>
+                    <th>List przewozowy</th>
+                    <th>Faktura</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var order in Model.Model.Where(o => o.OrderItems.Sum(i => i.Quantity) > 0))
+                {
+                    <tr>
+                        <td>@order.OrderId/@order.Year</td>
+                        <td>@order.DeliveryDate.ToShortDateString()</td>
+                        <td>@order.OrderItems.Sum(i => i.UnitPrice * i.Quantity).ToString("N2")</td>
+                        <td>@order.ReferenceNumber</td>
+                        <td><a href="@String.Format("https://eschenker.dbschenker.com/nges-portal/public/pl-PL_PL/#!/tracking/customer-search?refType=aam&refNumber={0}&transportMode=LAND",order.TrackingNumber)" target="_blank">@order.TrackingNumber</a></td>
+                        <td><a asp-route-handler="invoice" asp-route-orderId="@order.OrderId" asp-route-orderYear="@order.Year" class="order__button order__button__green @(!order.IsInvoiceIssued?"disabled":"")">Pobierz</a></td>
+                        <td>
+                            <button class="order__button order__button__purple" data-toggle="modal" data-target="#@order.OrderId">Pozycje</button>
+                            <div class="modal fade" id="@order.OrderId">
+                                <div class="modal-dialog modal-xlg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="modal-title">
+                                                <strong>Nr zamówienia: </strong>@order.OrderId/@order.Year
+                                            </div>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>SKU</th>
+                                                        <th>Nazwa</th>
+                                                        <th>Partia</th>
+                                                        <th>Ilość [kg]</th>
+                                                        <th>Cena [netto]</th>
+                                                        <th>Wartość [netto]</th>
+                                                        <th class="text-center">Waluta</th>
+                                                        <th class="text-center">Specyfikacja</th>
+                                                        <th class="text-center">MSDS</th>
+                                                        <th class="text-center">Certyfikat zgodności</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in order.OrderItems)
+                                                    {
+                                                        <tr class="order-pos">
+                                                            <td>@item.PositionNumber</td>
+                                                            <td>@item.SKU</td>
+                                                            <td>@item.ProductName</td>
+                                                            <td></td>
+                                                            <td>@item.Quantity</td>
+                                                            <td>@item.UnitPrice.ToString("N2")</td>
+                                                            <td>@((item.UnitPrice * item.Quantity).ToString("N2"))</td>
+                                                            <td class="text-center">@item.Currency</td>
+                                                            <td class="text-center"><a class="order__button order__button__green" asp-page="/Catalog/Detail" asp-route-handler="download" asp-route-itemId="@item.SKU" asp-route-documentType="2">Pobierz</a></td>
+                                                            <td class="text-center"><a class="order__button order__button__green @(!item.IsDangerousGood?"disabled":"")" asp-page="/Catalog/Detail" asp-route-handler="download" asp-route-itemId="@item.SKU" asp-route-documentType="1">Pobierz</a></td>
+                                                            <td></td>
+                                                        </tr>
+                                                        @foreach (var lot in item.Lots)
+                                                        {
+                                                            <tr class="coa-row">
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td>@lot.LotNumber</td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td class="text-center"><a asp-route-handler="file" asp-route-documentId="@lot.CoCDocumentId" class="order__button order__button__green">Pobierz</a></td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">X</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    }
+
+</div>
+
+<style>
+    .table > tbody > tr > td {
+        vertical-align: middle;
+    }
+
+    .coa-row td, .order-pos td {
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .coa-row, .coa-row a {
+        font-size: 12px;
+    }
+
+    .coa-row {
+        height: 22px;
+        color: darkmagenta;
+    }
+
+    @@media (min-width: 1200px) {
+        .modal-xlg {
+            width: 80%;
+        }
+    }
+</style>

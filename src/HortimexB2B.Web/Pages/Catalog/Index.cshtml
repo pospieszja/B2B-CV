@@ -1,0 +1,54 @@
+﻿@page
+@model HortimexB2B.Web.Pages.Catalog.IndexModel
+@{
+    ViewData["Title"] = "Katalog produktów";
+}
+
+
+<h2>@ViewData["Title"]</h2>
+
+<div id="info-box" class="alert alert-info text-center">
+    W sprawie innych produktów <a href="https://hortimex.pl/kontakt/" target="_blank">skontaktuj się ze swoim Reprezentantem Regionalnym.</a>
+</div>
+
+@if (Model.CatalogModel != null)
+{
+    @if (@Model.CatalogModel.CatalogItems.Any())
+    {
+        <div class="catalog__wrapper">
+
+            @if (Model.CatalogModel.CatalogItems.Count() > 0)
+            {
+                foreach (var item in Model.CatalogModel.CatalogItems)
+                {
+                    <div class="card__item">
+                        <h1 class="card__item__header">
+                            @item.Name
+                        </h1>
+                        <div class="card__item__footer">
+                            <span class="card__item__code">@item.Code</span>
+                            <a asp-page="Detail" asp-route-itemId="@item.Code" class="item__basket__button">Szczegóły</a>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <nav>
+            @if (String.IsNullOrEmpty(@Model.CatalogModel.Query))
+            {
+                <ul class="pager">
+                    <li class="@Model.CatalogModel.PaginationInfo.Previous"><a asp-route-pageid="@(Model.CatalogModel.PaginationInfo.ActualPage - 1)">Poprzednia</a></li>
+                    <li class="@Model.CatalogModel.PaginationInfo.Next"><a asp-route-pageid="@(Model.CatalogModel.PaginationInfo.ActualPage + 1)">Następna</a></li>
+                </ul>
+            }
+            else
+            {
+                <ul class="pager">
+                    <li class="@Model.CatalogModel.PaginationInfo.Previous"><a asp-route-pageid="@(Model.CatalogModel.PaginationInfo.ActualPage - 1)" asp-route-query="@Model.CatalogModel.Query">Poprzednia</a></li>
+                    <li class="@Model.CatalogModel.PaginationInfo.Next"><a asp-route-pageid="@(Model.CatalogModel.PaginationInfo.ActualPage + 1)" asp-route-query="@Model.CatalogModel.Query">Następna</a></li>
+                </ul>
+            }
+        </nav>
+    }
+}

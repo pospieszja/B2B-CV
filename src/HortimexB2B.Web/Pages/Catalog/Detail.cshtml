@@ -1,0 +1,85 @@
+﻿@page
+@model HortimexB2B.Web.Pages.Catalog.DetailModel
+@{
+    ViewData["Title"] = @Html.DisplayFor(m => Model.ItemModel.Name);
+}
+
+<h3>@Html.DisplayFor(m => Model.ItemModel.Name)</h3>
+
+
+
+<div class="card">
+    <div class="card-body">
+        <p class="item__code">Indeks wg Hortimex: @Html.DisplayFor(m => Model.ItemModel.Code)</p>
+
+        <p class="item__price">Twoja cena za 1 kg: @Html.DisplayFor(m => m.ItemModel.UnitPrice) zł</p>
+
+        @if (Model.ItemModel.Stock.Count() == 0)
+        {
+            <div id="info-box" class="alert alert-warning text-center">
+                Aktualnie brak towaru na stanie magazynowym. <a href="https://hortimex.pl/kontakt/" target="_blank">Skontaktuj się ze swoim Reprezentantem Regionalnym.</a>
+            </div>
+        }
+        else
+        {
+            var index = 0;
+
+
+            @foreach (var stock in Model.ItemModel.Stock)
+            {
+                index++;
+
+                <div class="item__stock">
+                    <p class="card-text">Rodzaj opakowania: @Html.DisplayFor(m => stock.UnitName)</p>
+                    <p>Liczba dostępnych opakowań: @Html.DisplayFor(m => stock.Quantity)</p>
+
+                    <form id="addToBasket-@index" asp-page="/Basket/Index" method="post">
+
+                        <input type="hidden" asp-for="@Model.ItemModel.Code" name="code" />
+                        <input type="hidden" asp-for="@Model.ItemModel.Name" name="name" />
+                        <input type="hidden" asp-for="@Model.ItemModel.UnitPrice" name="unitPrice" />
+                        <input type="hidden" asp-for="@stock.Unit" name="unit" />
+                        <input type="hidden" asp-for="@stock.StockId" name="stockId" />
+
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                <input id="quantity-@index" class="form-control item__quantity" name="quantity" placeholder="liczba opakowań">
+                            </div>
+                        </div>
+                        <input type="submit" class="item__basket__button" value="Dodaj do koszyka" onclick="checkQuantity(@index,@stock.Quantity)" />
+
+                    </form>
+                </div>
+            }
+        }
+
+
+        @if (Model.ItemModel.IsDangerousGood)
+        {
+            <a asp-route-handler="download" asp-route-itemId="@Model.ItemModel.Code" asp-route-documentType="1">Pobierz aktualny MSDS</a><br>
+        }
+        <a asp-route-handler="download" asp-route-itemId="@Model.ItemModel.Code" asp-route-documentType="2">Pobierz aktualną specyfikacje</a>
+
+    </div>
+</div>
+
+
+<script>
+    function checkQuantity(index, stock) {
+        event.preventDefault();
+
+        var quantity = document.getElementById("quantity-" + index).value;
+
+        if (quantity > stock) {
+            alert("Brak żądanej ilości na stanie magazynowym");
+            return;
+        }
+
+        document.getElementById("addToBasket-" + index).submit();
+    }
+
+</script>
+
+
+
+

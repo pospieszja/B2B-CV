@@ -1,0 +1,43 @@
+﻿@page
+@model HortimexB2B.Web.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Zarządzanie użytkownikami</h2>
+
+<a class="btn btn-success" asp-page="AddUser">Dodaj</a>
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>NIP</th>
+            <th>E-mail</th>
+            <th>Graffiti Id</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var user in Model.UsersListViewModel)
+        {
+            <tr>
+                <td>@user.CompanyName</td>
+                <td>@user.NIP</td>
+                <td>@user.Email</td>
+                <td>@user.GraffitiId</td>
+                <td>
+                    <a asp-page="EditUser" asp-route-userId="@user.Id" class="btn btn-warning">Edytuj</a>
+                    <form method="post" asp-page-handler="delete" asp-route-id="@user.Id">
+                        <button class="btn btn-danger">
+                            Usuń
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
